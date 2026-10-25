@@ -1,0 +1,21 @@
+name: Abalion - publicar ação visual
+on:
+  issues:
+    types: [opened, reopened]
+permissions:
+  issues: write
+  contents: read
+jobs:
+  executar:
+    if: github.event.issue.user.login == 'MeuRepertorio'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Baixar código da central
+        uses: actions/checkout@v4
+      - name: Aplicar alteração autorizada nos projetos
+        env:
+          ABALION_OWNER: MeuRepertorio
+          ABALION_TARGET_TOKEN: ${{ secrets.ABALION_TARGET_TOKEN }}
+          GH_ISSUE_TOKEN: ${{ github.token }}
+        run: python3 automation/execute.py
