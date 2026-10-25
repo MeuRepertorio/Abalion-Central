@@ -12,9 +12,11 @@ const definitions=[
 {id:'entrevista',name:'Entrevista de Emprego',icon:'RH',desc:'Preparação para o Mercado de Trabalho',repo:'Entrevista-de-Emprego',site:'Entrevista-de-Emprego',status:'Em foco'}
 ];
 const stored=(()=>{try{return JSON.parse(localStorage.getItem('abalion-central-v2')||'null')}catch{return null}})();
-const defaults={projects:Object.fromEntries(definitions.map(x=>[x.id,{status:x.status,progress:0,next:'',due:'',notes:''}])),tasks:[],history:[],theme:'light'};
+const defaults={projects:Object.fromEntries(definitions.map(x=>[x.id,{status:x.status,progress:0,next:'',due:'',notes:''}])),tasks:[],history:[],theme:'dark'};
 let state=stored&&typeof stored==='object'&&stored.projects?{...defaults,...stored}:structuredClone(defaults);
 for(const x of definitions){if(!state.projects[x.id])state.projects[x.id]={...defaults.projects[x.id]};}
+// Migrate only the appearance; existing tasks, decisions and notes stay intact.
+try{if(localStorage.getItem('abalion-monolith-v3')!=='activated'){state.theme='dark';localStorage.setItem('abalion-monolith-v3','activated');localStorage.setItem('abalion-central-v2',JSON.stringify(state));}}catch(e){}
 const save=()=>{try{localStorage.setItem('abalion-central-v2',JSON.stringify(state))}catch(e){alert('Armazenamento cheio; exporte seus dados.')}};
 const fmt=d=>{if(!d)return 'A definir';const dt=new Date(d+'T12:00:00');return Number.isNaN(dt.getTime())?d:dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})};
 const doc=(text,kind)=>{const el=document.createElement(kind);el.textContent=text;return el};
@@ -59,7 +61,14 @@ function renderHistory(){
  $('historyCount').textContent=state.history.length+' REGISTROS';
  $('history').innerHTML=state.history.length?state.history.slice().reverse().map((n,i)=>`<div class="history-item"><button data-del-history="${state.history.length-1-i}" aria-label="Excluir registro">✕</button><small>${h(n.at)} · ${h(definitions.find(p=>p.id===n.project)?.name||'Geral')}</small><p>${h(n.text)}</p></div>`).join(''):'<p class="tiny-note">Nenhum registro ainda. Notas locais são opcionais; mudanças reais nos sites ocorrem em Publicar nos projetos.</p>';
 }
-function renderAll(){renderHome();renderPlanets();renderBoard();renderAgenda();renderHistory()}
+let chosenProject='atlas';
+function renderExecutiveControl(){
+ const selector=$('eliteProjectSelector');if(!selector)return;
+ const p=definitions.find(x=>x.id===chosenProject)||definitions[3];const progress=state.projects[p.id]||{};
+ $('eliteProjectDetail').innerHTML=`<span class="chosen-code">${h(p.icon)}</span><div><strong>${h(p.name)}</strong><small>${h(p.desc)}</small><span class="selected-status">ESTADO · ${h(progress.status||'A definir')}</span></div>`;
+ $('eliteOpenRepo').href=repoURL(p);$('eliteOpenSite').href=siteURL(p);
+}
+function renderAll(){renderHome();renderPlanets();renderBoard();renderAgenda();renderHistory();renderExecutiveControl()}
 function openProject(id){const p=definitions.find(x=>x.id===id);if(!p)return;editingProject=id;const form=$('projectForm');
  $('projectModalTitle').textContent=p.name;$('projectDescription').textContent=p.desc;
  for(const key of ['status','progress','next','due','notes'])form.elements[key].value=state.projects[id][key]??'';
@@ -72,6 +81,10 @@ function openTask(id=null,project=null){const t=state.tasks.find(x=>x.id===id);e
  $('removeTask').hidden=!t;$('taskDialog').showModal();}
 function setSelect(el,options,all=false){el.innerHTML=(all?'<option value="all">Todos os projetos</option>':'')+definitions.map(p=>`<option value="${p.id}">${h(p.name)}</option>`).join('')}
 setSelect($('taskForm').elements.project,definitions);setSelect($('noteProject'),definitions);setSelect($('boardProject'),definitions,true);
+setSelect($('eliteProjectSelector'),definitions);$('eliteProjectSelector').value=chosenProject;
+$('eliteProjectSelector').addEventListener('change',e=>{chosenProject=e.target.value;renderExecutiveControl()});
+$('eliteCreatePage').addEventListener('click',()=>{nav('controle');const p=definitions.find(x=>x.id===chosenProject);document.querySelectorAll('#controlTargets input').forEach(x=>x.checked=x.value==='MeuRepertorio/'+p.repo);$('realControlForm').elements.title.focus();});
+$('eliteCreateTask').addEventListener('click',()=>openTask(null,chosenProject));
 $('boardProject').value='all';
 $('projectForm').addEventListener('submit',e=>{e.preventDefault();const f=e.currentTarget;const d=state.projects[editingProject];
  for(const key of ['status','next','due','notes'])d[key]=f.elements[key].value;
@@ -123,7 +136,7 @@ $('previewRealAction').addEventListener('click',previewAction);
 cm.addEventListener('submit',e=>{e.preventDefault();const c=previewAction();if(!c)return;
  if(!confirm('Publicar este conteúdo nos repositórios selecionados? Será criada uma solicitação pública no GitHub para você confirmar.'))return;
  const command='<!-- ABALION_COMMAND_START -->\n'+JSON.stringify(c)+'\n<!-- ABALION_COMMAND_END -->';
- const body='Operação visual enviada pela central Abalion. **Conteúdo destinado a publicação pública.**\n\n'+command+'\n\nA execução ocorrerá somente após a automação estar configurada e autorizada pelo proprietário.';
+ const body='Operação visual enviada pela central Abalion. **Conteúdo destinado a publicação pública.**\n\n'+command+'\n\nEsta publicação depende da confirmação do proprietário e da permissão de escrita do GitHub Actions.';
  const title='[ABALION] Criar aba: '+c.title;
  const u='https://github.com/MeuRepertorio/Abalion-Central/issues/new?'+new URLSearchParams({title,body}).toString();
  window.open(u,'_blank','noopener,noreferrer');$('realActionStatus').textContent='Solicitação preparada. Na aba do GitHub, confirme em Submit new issue. Depois consulte o resultado da automação. Sem essa confirmação, nenhum arquivo externo é modificado.';
