@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#101c29"><meta name="description" content="FORMA Studio — documentos profissionais feitos de forma visual, organizada e orientada. Funciona offline."><title>FORMA Studio Pro — Editor de documentos profissionais</title><link rel="stylesheet" href="style.css"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg"></head>
+<body>
+<div id="app" class="app-shell">
+  <aside id="side" class="sidebar">
+    <div class="brand"><div class="brand-glyph"><span>F</span></div><div><div class="brand-name">FORMA<span class="trademark">/</span></div><div class="brand-sub">STUDIO DE DOCUMENTOS</div></div><button id="closeSide" class="iconbtn mobile-only" title="Fechar menu" aria-label="Fechar menu">×</button></div>
+    <div class="sidebar-section-label">ESPAÇO DE TRABALHO</div>
+    <button class="nav-item active" data-nav="workspace"><span class="navico">▤</span> Meus documentos <span id="docCounter" class="tinycount">0</span></button>
+    <button class="nav-item" data-nav="templates"><span class="navico">▦</span> Modelos prontos</button>
+    <button class="nav-item" data-nav="library"><span class="navico">◈</span> Repertório de escrita</button>
+    <div class="sidebar-rule"></div>
+    <div class="sidebar-section-label between">PROJETOS <button class="smallplus" id="btnNewDocSide" aria-label="Novo documento">+</button></div>
+    <div id="docList" class="doc-list"></div>
+    <div class="sidebar-bottom"><div class="offline-chip"><span class="dot"></span> Funciona offline</div><button class="backup-btn" id="backupAll">↓ Exportar todo o trabalho</button><div class="side-note">Dados salvos neste dispositivo. Guarde cópias de segurança.</div></div>
+  </aside>
+  <div id="sideShade" class="side-shade"></div>
+  <div class="app-main">
+    <header class="topbar"><div class="top-left"><button class="iconbtn mobile-only" id="openSide" aria-label="Abrir menu">☰</button><div class="top-crumb"><span>ÁREA DE CRIAÇÃO</span><span class="crumb-sep">/</span><span id="crumbName">Documento</span></div></div><div class="top-right"><span class="saved-status" id="saveStatus"><span class="saved-mark">●</span> Pronto</span><button class="action ghost" id="btnImport">↥ <span class="desktop-only">Importar</span></button><button class="action primary" id="btnNewDoc">+ <span class="desktop-only">Novo</span></button></div></header>
+    <div id="editorWorkspace" class="work-area">
+      <div class="work-head"><div class="head-main"><div class="eyebrow">DOCUMENTO ATIVO <span id="docTypeLabel" class="typepill">RELATÓRIO</span></div><input id="docTitle" class="doc-title" placeholder="Nome do documento" spellcheck="true" aria-label="Título do documento"><input id="docSubtitle" class="doc-subtitle" placeholder="Descrição breve ou objetivo do documento (opcional)" aria-label="Descrição do documento"></div><div class="head-actions"><button class="outline small" id="btnTemplates">▦ Aplicar modelo</button><button class="outline small" id="btnExport">↧ Exportar</button><button class="dots" id="btnOptions" title="Opções">⋯</button></div></div>
+      <div class="views-bar"><div class="view-tabs" role="tablist"><button class="view-tab active" data-view="write">✎ <span>Escrever</span></button><button class="view-tab" data-view="map">▦ <span>Mapa visual</span></button><button class="view-tab" data-view="paper">▤ <span>Documento</span></button></div><div class="view-tools"><span class="word-counter" id="wordCounter">0 palavras</span><button id="focusMode" class="subtle-btn" title="Modo foco">⛶ <span class="desktop-only">Foco</span></button></div></div>
+      <div class="workspace-canvas"><main id="content" class="content-area" tabindex="-1"></main><aside class="inspector" id="inspector"><div class="inspector-tabs"><button data-panel="guide" class="inspector-tab active">Orientador</button><button data-panel="format" class="inspector-tab">Aparência</button></div><div id="inspectorContent" class="inspector-body"></div></aside></div>
+    </div>
+    <div id="specialPage" class="special-page hidden"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="modal-layer hidden" id="modalLayer" role="presentation"><div class="modal-backdrop" data-close="true"></div><div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><div><div class="modal-kicker" id="modalKicker">FORMA STUDIO</div><h2 id="modalTitle">Janela</h2></div><button class="iconbtn" id="modalClose" aria-label="Fechar">×</button></div><div id="modalContent" class="modal-content"></div><div id="modalFooter" class="modal-footer"></div></div></div>
+<input type="file" id="mediaImport" accept="image/png,image/jpeg,image/webp" hidden><input type="file" id="fileImport" accept=".json,.txt,.md,.docx" hidden><input type="file" id="fileDocImport" accept=".json,.txt,.md,.docx" hidden>
+<script src="app.js"></script><script>if("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register("./sw.js").catch(()=>{});</script></body></html>
