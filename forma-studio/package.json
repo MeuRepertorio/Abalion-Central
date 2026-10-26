@@ -19,7 +19,7 @@
     "asar":true,
     "directories":{"output":"dist"},
     "files":["desktop/main.cjs","web/**/*","package.json"],
-    "win":{"target":[{"target":"nsis","arch":["x64"]},{"target":"portable","arch":["x64"]}],"artifactName":"FORMA-Studio-${version}-${arch}-${target}.${ext}"},
+    "win":{"target":[{"target":"nsis","arch":["x64"]},{"target":"portable","arch":["x64"]}]},
     "nsis":{"oneClick":false,"allowToChangeInstallationDirectory":true,"createDesktopShortcut":true,"createStartMenuShortcut":true}
   }
 }
