@@ -1,0 +1,13 @@
+{
+ "id":"./",
+ "name":"FORMA Studio Pro — Documentos Profissionais",
+ "short_name":"FORMA Studio",
+ "description":"Criação visual de relatórios, revisão orientada e exportação DOCX/PDF.",
+ "start_url":"./index.html",
+ "scope":"./",
+ "display":"standalone",
+ "background_color":"#f7faf8",
+ "theme_color":"#101c29",
+ "lang":"pt-BR",
+ "icons":[{"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
