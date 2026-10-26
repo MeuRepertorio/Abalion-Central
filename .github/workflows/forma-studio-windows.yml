@@ -1,0 +1,32 @@
+name: FORMA Studio · Windows Installer
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'forma-studio/**'
+      - '.github/workflows/forma-studio-windows.yml'
+permissions:
+  contents: read
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: forma-studio
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install desktop dependencies
+        run: npm install --no-audit --no-fund
+      - name: Package FORMA Studio (.exe)
+        run: npm run dist:win
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FORMA-Studio-Windows-2.0
+          path: forma-studio/dist/*.exe
+          if-no-files-found: error
