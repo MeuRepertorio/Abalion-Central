@@ -1,0 +1,25 @@
+{
+  "name":"forma-studio-pro",
+  "productName":"FORMA Studio",
+  "version":"2.0.0",
+  "private":true,
+  "description":"Editor profissional de documentos visuais e relatórios",
+  "main":"desktop/main.cjs",
+  "author":"FORMA Studio",
+  "license":"UNLICENSED",
+  "scripts":{
+    "desktop":"electron .",
+    "dist:win":"electron-builder --win nsis portable --x64",
+    "dist:dir":"electron-builder --dir"
+  },
+  "devDependencies":{"electron":"^38.0.0","electron-builder":"^26.0.0"},
+  "build":{
+    "appId":"studio.forma.documentos",
+    "productName":"FORMA Studio",
+    "asar":true,
+    "directories":{"output":"dist"},
+    "files":["desktop/main.cjs","web/**/*","package.json"],
+    "win":{"target":[{"target":"nsis","arch":["x64"]},{"target":"portable","arch":["x64"]}],"artifactName":"FORMA-Studio-${version}-${arch}-${target}.${ext}"},
+    "nsis":{"oneClick":false,"allowToChangeInstallationDirectory":true,"createDesktopShortcut":true,"createStartMenuShortcut":true}
+  }
+}
